@@ -4,24 +4,24 @@
 #
 
 -
-  name: 'RSS 2.0 Feed'
+  name: 'RSS 2.0 Syndication'
   uriPattern: '{node}.rss2'
   defaults:
-    '@package': 'Nezaniel.Feeder'
+    '@package': 'Nezaniel.Syndicator'
     '@controller': 'Node'
-    '@action': 'feed'
+    '@action': 'syndicate'
     '@format': 'rss2'
   routeParts:
     node:
       handler: TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface
 
 -
-  name: 'Atom Feed'
+  name: 'Atom Syndication'
   uriPattern: '{node}.atom'
   defaults:
-    '@package': 'Nezaniel.Feeder'
+    '@package': 'Nezaniel.Syndicator'
     '@controller': 'Node'
-    '@action': 'feed'
+    '@action': 'syndicate'
     '@format': 'atom'
   routeParts:
     node:

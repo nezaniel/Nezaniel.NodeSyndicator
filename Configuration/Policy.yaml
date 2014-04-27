@@ -1,8 +1,8 @@
 resources:
   methods:
-    Nezaniel_Feeder_Feed: 'method(Nezaniel\Feeder\Controller\NodeController->(feed)Action())'
+    Nezaniel_Syndicator_Syndicate: 'method(Nezaniel\NodeSyndicator\Controller\NodeController->(syndicate)Action())'
 
 acls:
   Everybody:
     methods:
-      Nezaniel_Feeder_Feed: GRANT
+      Nezaniel_Syndicator_Syndicate: GRANT
