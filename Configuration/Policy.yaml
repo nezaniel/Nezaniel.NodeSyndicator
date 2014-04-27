@@ -1,0 +1,8 @@
+resources:
+  methods:
+    Nezaniel_Feeder_Feed: 'method(Nezaniel\Feeder\Controller\NodeController->(feed)Action())'
+
+acls:
+  Everybody:
+    methods:
+      Nezaniel_Feeder_Feed: GRANT

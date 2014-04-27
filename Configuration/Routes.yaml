@@ -1,0 +1,28 @@
+#
+# Default subroutes configuration for the Feeder package
+# Copy this before the TYPO3.Neos subroutes in your project's Routes.yaml
+#
+
+-
+  name: 'RSS 2.0 Feed'
+  uriPattern: '{node}.rss2'
+  defaults:
+    '@package': 'Nezaniel.Feeder'
+    '@controller': 'Node'
+    '@action': 'feed'
+    '@format': 'rss2'
+  routeParts:
+    node:
+      handler: TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface
+
+-
+  name: 'Atom Feed'
+  uriPattern: '{node}.atom'
+  defaults:
+    '@package': 'Nezaniel.Feeder'
+    '@controller': 'Node'
+    '@action': 'feed'
+    '@format': 'atom'
+  routeParts:
+    node:
+      handler: TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface

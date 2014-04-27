@@ -1,0 +1,59 @@
+'TYPO3.Neos:Document':
+  superTypes:
+    feedable: 'Nezaniel.Feeder:Feedable'
+  feeder:
+    rss2:
+      feed:
+        channelMode: 'self'
+      channel:
+        itemFilter: 'TYPO3.Neos:Document'
+        itemsRecursive: FALSE
+        propertyMapping:
+          title: 'title'
+      item:
+        propertyMapping:
+          title: 'title'
+          descriptionMode: 'primaryContent'
+
+'TYPO3.Neos:ContentCollection':
+  superTypes:
+    rssChannel: 'Nezaniel.Feeder:RSS2Channel'
+    atomRelay: 'Nezaniel.Feeder:AtomRelay'
+  feeder:
+    rss2:
+      channel:
+        itemFilter: 'TYPO3.Neos:Content'
+
+'Nezaniel.Feeder:Feedable':
+  abstract: TRUE
+  ui:
+    inspector:
+      groups:
+        feed:
+          label: 'Feed'
+          position: 90
+  properties:
+    feedAsRss2:
+      type: boolean
+      defaultValue: FALSE
+      ui:
+        label: 'RSS2'
+        inspector:
+          group: 'feed'
+          position: 10
+    feedAsAtom:
+      type: boolean
+      defaultValue: FALSE
+      ui:
+        label: 'Atom'
+        inspector:
+          group: 'feed'
+          position: 20
+
+'Nezaniel.Feeder:RSS2Channel':
+  ui:
+  properties:
+
+'Nezaniel.Feeder:AtomRelay':
+  ui:
+  properties:
