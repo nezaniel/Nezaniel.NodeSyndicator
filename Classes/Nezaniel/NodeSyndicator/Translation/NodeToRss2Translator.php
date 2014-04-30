@@ -10,12 +10,15 @@ namespace Nezaniel\NodeSyndicator\Translation;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-use Doctrine\Common\Collections\ArrayCollection;
+use Nezaniel\NodeSyndicator\Service\NodeService;
 use Nezaniel\Syndicator\Core\Syndicator;
 use Nezaniel\Syndicator\Dto\Rss2 as Rss2;
 use Nezaniel\NodeSyndicator\Translation\Exception as Exception;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Routing\UriBuilder;
+use TYPO3\Flow\Utility\Arrays;
+use TYPO3\Media\Domain\Model\AssetInterface;
+use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -32,11 +35,26 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 	const ITEMDESCRIPTIONMODE_PRIMARYCONTENT = 'primaryContent';
 	const ITEMDESCRIPTIONMODE_PATH = 'path';
 
+	const ITEMGUIDMODE_PERMALINK = 'permalink';
+	const ITEMGUIDMODE_IDENTIFIER = 'identifier';
+
 
 	/**
-	 * @var \TYPO3\Flow\Mvc\Routing\UriBuilder
+	 * @var UriBuilder
 	 */
 	protected $uriBuilder;
+
+	/**
+	 * @Flow\Inject
+	 * @var NodeService
+	 */
+	protected $nodeService;
+
+	/**
+	 * @Flow\Inject
+	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
+	 */
+	protected $resourcePublisher;
 
 
 	/**
@@ -48,7 +66,7 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 	 */
 	public function translateNodeToFeed(NodeInterface $feedNode, UriBuilder $uriBuilder) {
 		$this->uriBuilder = clone $uriBuilder;
-		$feedConfiguration = $feedNode->getNodeType()->getConfiguration('feeder.rss2.feed');
+		$feedConfiguration = $feedNode->getNodeType()->getConfiguration('syndicator.rss2.feed');
 
 		switch ($feedConfiguration['channelMode']) {
 			case self::CHANNELMODE_PATH:
@@ -79,97 +97,121 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 	 * @param NodeInterface $channelNode
 	 * @return Rss2\Channel
 	 * @throws Exception\InvalidRss2ChannelNodeException
-	 * @todo handle description
-	 * @todo handle optional properties
+	 * @todo handle language
+	 * @todo handle categories
+	 * @todo handle cloud
+	 * @todo handle text input
+	 * @return Rss2\Channel
 	 */
 	public function translateNodeToChannel(NodeInterface $channelNode) {
+		$channelConfiguration = $channelNode->getNodeType()->getConfiguration('feeder.rss2.channel');
 		$this->mappedNodePropertyExtractor->reset()->initialize($channelNode, Syndicator::FORMAT_RSS2, 'channel');
+		$now = new \DateTime();
 
 		$channel = new Rss2\Channel(
 			$this->getMappedProperty('title'),
 			$this->getRssUri($channelNode),
-			$description
+			$this->nodeService->extractDescription($channelNode, Syndicator::CONTENTTYPE_RSS2, 'channel')
 		);
+		//$channel->setLanguage($channelNode->getContext()->getDimensions()['locale']);
+		if (($copyright = $this->mappedNodePropertyExtractor->extractMappedProperty('copyright')) !== NULL)
+			$channel->setCopyright($copyright);
+		if (($managingEditor = $this->mappedNodePropertyExtractor->extractMappedProperty('managingEditor')) !== NULL)
+			$channel->setManagingEditor($managingEditor);
+		if (($webMaster = $this->mappedNodePropertyExtractor->extractMappedProperty('webMaster')) !== NULL)
+			$channel->setWebMaster($webMaster);
+		$channel->setPubDate($now);
+		// insert categories here
+		$channel->setGenerator('Nezaniel.NodeSyndicator powered by TYPO3.Neos');
+		// insert cloud here
+		if (($ttl = $this->mappedNodePropertyExtractor->extractMappedProperty('ttl')) !== NULL)
+			$channel->setTtl($ttl);
+		if (($image = $this->mappedNodePropertyExtractor->extractMappedProperty('image')) instanceof ImageVariant) {
+			/** @var ImageVariant $image */
+			$channelImage = new Rss2\Image($image->getResource()->getUri(), $channel->getTitle(), $channel->getLink(), $image->getWidth(), $image->getHeight());
+			if (($imageDescription = $this->mappedNodePropertyExtractor->extractMappedProperty('imageDescription')) !== NULL)
+				$channelImage->setDescription($imageDescription);
+			$channel->setImage($channelImage);
+		}
+		if (($rating = $this->mappedNodePropertyExtractor->extractMappedProperty('rating')) !== NULL)
+			$channel->setRating($rating);
+		// handle text input
+		if (($skipHours = $this->mappedNodePropertyExtractor->extractMappedProperty('skipHours')) !== NULL) {
+			foreach (Arrays::integerExplode(',', $skipHours) as $hourToSkip) {
+				$channel->addHourToSkip($hourToSkip);
+			}
+		}
+		if (($skipDays = $this->mappedNodePropertyExtractor->extractMappedProperty('skipDays')) !== NULL) {
+			foreach (explode(',', $skipDays) as $dayToSkip) {
+				$channel->addDayToSkip($dayToSkip);
+			}
+		}
 
-		$channelConfiguration = $channelNode->getNodeType()->getConfiguration('feeder.rss2.channel');
-		if (is_array($channelConfiguration)) {
-			$channel = new Rss2\Channel();
-			$items = new \SplObjectStorage();
-			$itemNodes = $this->getItemNodes($channelNode, $channelConfiguration['itemFilter'], $channelConfiguration['itemsRecursive']);
-
-			if (sizeof($itemNodes) > 0) {
-				foreach ($itemNodes as $itemNode) {
-					$item = $this->translateNodeToItem($itemNode, $channelNode);
-					if ($item instanceof Rss2\Item) {
-						$items->add($item);
-					}
+		$items = new \SplObjectStorage();
+		$itemNodes = $this->nodeService->getItemNodes($channelNode, $channelConfiguration['itemFilter'], $channelConfiguration['itemsRecursive']);
+		if (sizeof($itemNodes) > 0) {
+			foreach ($itemNodes as $itemNode) {
+				$item = $this->translateNodeToItem($itemNode, $channel);
+				if ($item instanceof Rss2\Item) {
+					$items->attach($item);
 				}
 			}
-			return new Rss2\Channel($items);
-		} else {
-			throw new Exception\InvalidRss2ChannelNodeException('The given channel node has no valid RSS 2 syndication configuration.', 1398427465);
 		}
+		$channel->setItems($items);
+		return $channel;
 	}
 
-	/**
-	 * @param NodeInterface $parentNode
-	 * @param string $itemFilter
-	 * @param boolean $recursive
-	 * @return array
-	 */
-	protected function getItemNodes(NodeInterface $parentNode, $itemFilter, $recursive = FALSE) {
-		$itemNodes = $parentNode->getChildNodes($itemFilter);
 
-		if ($recursive && sizeof($itemNodes) > 0) {
-			foreach ($itemNodes as $itemNode) {
-				$itemNodes = array_merge($itemNodes, $this->getItemNodes($itemNode, $itemFilter, $recursive));
-			}
-		}
-
-		return $itemNodes;
-	}
 
 	/**
 	 * @param NodeInterface $itemNode
-	 * @param NodeInterface $channelNode
-	 * @return Item|NULL
+	 * @param Rss2\Channel $channel
+	 * @return Rss2\Item|NULL
 	 * @todo handle categories
-	 * @todo handle comments: Node relation?
-	 * @todo handle enclosure: Asset relation?
 	 * @todo handle pubDate: lastChanged in TYPO3CR?
+	 * @todo handle guid modes via itemConfiguration
 	 */
-	public function translateNodeToItem(NodeInterface $itemNode, NodeInterface $channelNode) {
-		if ($itemNode->getNodeType()->getConfiguration('feeder.rss2.item.propertyMapping')) {
-			switch ($itemNode->getNodeType()->getConfiguration('feeder.rss2.item.propertyMapping.descriptionMode')) {
-				case self::ITEMDESCRIPTIONMODE_PRIMARYCONTENT:
-					$description = $this->collapseDescriptionNodes($itemNode->getPrimaryChildNode());
-				break;
-				case self::ITEMDESCRIPTIONMODE_PATH:
-					$description = $this->collapseDescriptionNodes($itemNode->getNode($itemNode->getNodeType()->getConfiguration('feeder.rss2.item.propertyMapping.descriptionPath')));
-				break;
-				default:
-					$description = '';
-			}
-			$categories = new ArrayCollection();
-			$comments = '';
-			$enclosure = NULL;
-			$pubDate = '';
+	public function translateNodeToItem(NodeInterface $itemNode, Rss2\Channel $channel) {
+		$itemConfiguration = $itemNode->getNodeType()->getConfiguration('feeder.rss2.item');
+		$this->mappedNodePropertyExtractor->reset()->initialize($itemNode, Syndicator::FORMAT_RSS2, 'item');
 
-			return new Item(
-				$itemNode->getProperty($itemNode->getNodeType()->getConfiguration('feeder.rss2.item.propertyMapping.title')),
-				$this->uriBuilder->reset()->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $itemNode), 'Frontend\Node', 'TYPO3.Neos'),
-				$description,
-				$itemNode->getProperty($itemNode->getNodeType()->getConfiguration('feeder.rss2.item.propertyMapping.author')),
-				$categories,
-				$comments,
-				$enclosure,
-				$itemNode->getIdentifier(),
-				$pubDate,
-				new Source($channelNode->getProperty($channelNode->getNodeType()->getConfiguration('feeder.rss2.channel.propertyMapping.title')), $this->getRssUri($channelNode))
-			);
-		} else {
-			return NULL;
+		$title = $this->mappedNodePropertyExtractor->extractMappedProperty('title');
+		$description = $this->nodeService->extractDescription($itemNode, Syndicator::FORMAT_RSS2, 'item');
+
+		if ($title !== NULL && $title !== '' || $description !== NULL && $description !== '') {
+			$item = new Rss2\Item();
+			if ($title !== NULL)
+				$item->setTitle($title);
+			$item->setLink($this->uriBuilder->reset()->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $itemNode), 'Frontend\Node', 'TYPO3.Neos'));
+			if ($description !== NULL)
+				$item->setDescription($description);
+			if (($author = $this->mappedNodePropertyExtractor->extractMappedProperty('author')) !== NULL)
+				$item->setAuthor($author);
+			// handle categories
+			$comments = $this->mappedNodePropertyExtractor->extractMappedProperty('comments');
+			if ($comments instanceof NodeInterface) {
+				$item->setComments($this->uriBuilder->reset()->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $comments), 'Frontend\Node', 'TYPO3.Neos'));
+			} elseif (is_string($comments) && strlen($comments) > 0) {
+				$item->setComments($comments);
+			}
+			if (($enclosure = $this->mappedNodePropertyExtractor->extractMappedProperty('enclosure')) instanceof AssetInterface) {
+				/** @var AssetInterface $enclosure */
+				$item->setEnclosure(new Rss2\Enclosure(
+					$this->resourcePublisher->getPersistentResourceWebUri($enclosure->getResource()),
+					filesize($enclosure->getResource()->getUri()),
+					$enclosure->getResource()->getMediaType()
+				));
+			}
+			/** @todo handle different guid modes */
+			$item->setGuid($itemNode->getIdentifier());
+			$item->setSource(new Rss2\Source(
+				$channel->getTitle(),
+				$channel->getLink()
+			));
+
+			return $item;
 		}
+		return NULL;
 	}
 
 	/**

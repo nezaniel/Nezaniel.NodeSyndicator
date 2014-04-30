@@ -9,6 +9,7 @@
         itemFilter: 'TYPO3.Neos:Document'
         itemsRecursive: FALSE
         propertyMapping:
+          descriptionMode: 'primaryContent'
           title: 'title'
       item:
         propertyMapping:

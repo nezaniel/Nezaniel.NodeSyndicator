@@ -43,7 +43,7 @@ class NodeController extends ActionController {
 	/**
 	 * @param NodeInterface $node
 	 * @return string
-	 * @throws PageNotFoundException if the requested node is not configured for or capable of being rendered as RSS2 feed
+	 * @throws PageNotFoundException if the requested node is not configured for or capable of being rendered as feed in the requested format
 	 */
 	public function syndicateAction(NodeInterface $node) {
 		if ($this->nodeInformationService->canNodeBeSyndicated($node, $this->getSyndicationFormat())
