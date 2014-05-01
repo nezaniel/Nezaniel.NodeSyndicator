@@ -66,7 +66,7 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 	 */
 	public function translateNodeToFeed(NodeInterface $feedNode, UriBuilder $uriBuilder) {
 		$this->uriBuilder = clone $uriBuilder;
-		$feedConfiguration = $feedNode->getNodeType()->getConfiguration('syndicator.rss2.feed');
+		$feedConfiguration = $feedNode->getNodeType()->getConfiguration('syndication.rss2.feed');
 
 		switch ($feedConfiguration['channelMode']) {
 			case self::CHANNELMODE_PATH:
@@ -104,15 +104,16 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 	 * @return Rss2\Channel
 	 */
 	public function translateNodeToChannel(NodeInterface $channelNode) {
-		$channelConfiguration = $channelNode->getNodeType()->getConfiguration('feeder.rss2.channel');
+		$channelConfiguration = $channelNode->getNodeType()->getConfiguration('syndication.rss2.channel');
 		$this->mappedNodePropertyExtractor->reset()->initialize($channelNode, Syndicator::FORMAT_RSS2, 'channel');
 		$now = new \DateTime();
 
 		$channel = new Rss2\Channel(
 			$this->getMappedProperty('title'),
 			$this->getRssUri($channelNode),
-			$this->nodeService->extractDescription($channelNode, Syndicator::CONTENTTYPE_RSS2, 'channel')
+			$this->nodeService->extractDescription($channelNode, Syndicator::FORMAT_RSS2, 'channel')
 		);
+
 		//$channel->setLanguage($channelNode->getContext()->getDimensions()['locale']);
 		if (($copyright = $this->mappedNodePropertyExtractor->extractMappedProperty('copyright')) !== NULL)
 			$channel->setCopyright($copyright);
@@ -172,7 +173,7 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 	 * @todo handle guid modes via itemConfiguration
 	 */
 	public function translateNodeToItem(NodeInterface $itemNode, Rss2\Channel $channel) {
-		$itemConfiguration = $itemNode->getNodeType()->getConfiguration('feeder.rss2.item');
+		$itemConfiguration = $itemNode->getNodeType()->getConfiguration('syndication.rss2.item');
 		$this->mappedNodePropertyExtractor->reset()->initialize($itemNode, Syndicator::FORMAT_RSS2, 'item');
 
 		$title = $this->mappedNodePropertyExtractor->extractMappedProperty('title');

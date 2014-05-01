@@ -48,6 +48,7 @@ class NodeController extends ActionController {
 	public function syndicateAction(NodeInterface $node) {
 		if ($this->nodeInformationService->canNodeBeSyndicated($node, $this->getSyndicationFormat())
 			&& $this->nodeInformationService->isNodeToBeSyndicated($node, $this->getSyndicationFormat())) {
+
 				switch ($this->getSyndicationFormat()) {
 					case Syndicator::FORMAT_RSS2:
 						$feed = $this->nodeToRss2Translator->translateNodeToFeed($node, $this->uriBuilder);

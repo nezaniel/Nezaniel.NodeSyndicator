@@ -1,0 +1,15 @@
+{
+	"name": "nezaniel\/nodesyndicator",
+	"type": "typo3-flow-package",
+	"description": "RSS2 and Atom syndication for Neos NodeTypes",
+    "license": "GPL-3.0+",
+    "require": {
+        "typo3/neos-nodetypes": "1.1.0-beta1",
+        "nezaniel/syndicator": "*"
+    },
+	"autoload": {
+		"psr-0": {
+			"Nezaniel\\NodeSyndicator": "Classes"
+		}
+	}
+}

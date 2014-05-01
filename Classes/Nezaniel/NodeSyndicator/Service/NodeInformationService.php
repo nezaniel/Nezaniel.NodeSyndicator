@@ -28,7 +28,7 @@ class NodeInformationService {
 	 * @return boolean
 	 */
 	public function canNodeBeSyndicated(NodeInterface $node, $syndicationFormat) {
-		return ($node->getNodeType()->isOfType('Nezaniel.Feeder:Syndication')
+		return ($node->getNodeType()->isOfType('Nezaniel.NodeSyndicator:Syndication')
 			&& $node->getNodeType()->getConfiguration('syndication.' . $syndicationFormat . '.feed') !== NULL
 		);
 	}

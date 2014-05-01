@@ -10,8 +10,8 @@ namespace Nezaniel\NodeSyndicator\Translation;
  *                                                                          *
  * The TYPO3 project - inspiring people to share!                           *
  *                                                                          */
+use TYPO3\Flow\Annotations as Flow;
 use Nezaniel\NodeSyndicator\Service\MappedNodePropertyExtractor;
-use TYPO3\Flow as Flow;
 
 /**
  * An abstract translator for nodes

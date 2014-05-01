@@ -1,6 +1,6 @@
 'TYPO3.Neos:Document':
   superTypes:
-    syndication: 'Nezaniel.Feeder:Syndication'
+    syndication: 'Nezaniel.NodeSyndicator:Syndication'
   syndication:
     rss2:
       feed:
@@ -17,12 +17,12 @@
           descriptionMode: 'primaryContent'
 
 'TYPO3.Neos:ContentCollection':
-  feeder:
+  syndicator:
     rss2:
       channel:
         itemFilter: 'TYPO3.Neos:Content'
 
-'Nezaniel.Feeder:Syndication':
+'Nezaniel.NodeSyndicator:Syndication':
   abstract: TRUE
   ui:
     inspector:

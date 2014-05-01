@@ -7,7 +7,7 @@
   name: 'RSS 2.0 Syndication'
   uriPattern: '{node}.rss2'
   defaults:
-    '@package': 'Nezaniel.Syndicator'
+    '@package': 'Nezaniel.NodeSyndicator'
     '@controller': 'Node'
     '@action': 'syndicate'
     '@format': 'rss2'
@@ -19,7 +19,7 @@
   name: 'Atom Syndication'
   uriPattern: '{node}.atom'
   defaults:
-    '@package': 'Nezaniel.Syndicator'
+    '@package': 'Nezaniel.NodeSyndicator'
     '@controller': 'Node'
     '@action': 'syndicate'
     '@format': 'atom'
