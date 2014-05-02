@@ -48,16 +48,15 @@ class NodeController extends ActionController {
 	public function syndicateAction(NodeInterface $node) {
 		if ($this->nodeInformationService->canNodeBeSyndicated($node, $this->getSyndicationFormat())
 			&& $this->nodeInformationService->isNodeToBeSyndicated($node, $this->getSyndicationFormat())) {
-
 				switch ($this->getSyndicationFormat()) {
 					case Syndicator::FORMAT_RSS2:
 						$feed = $this->nodeToRss2Translator->translateNodeToFeed($node, $this->uriBuilder);
 						header('Content-Type:' . Syndicator::CONTENTTYPE_RSS2);
-						return $feed->xmlSerialize();
+						exit($feed->xmlSerialize());
 					case Syndicator::FORMAT_ATOM:
 						$feed = $this->nodeToAtomTranslator->translateNodeToFeed($node, $this->uriBuilder);
 						header('Content-Type:' . Syndicator::CONTENTTYPE_ATOM);
-						return $feed->xmlSerialize();
+						exit($feed->xmlSerialize());
 					default:
 					throw new PageNotFoundException();
 				}

@@ -10,7 +10,6 @@ namespace Nezaniel\NodeSyndicator\Translation;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-use Nezaniel\NodeSyndicator\Service\NodeService;
 use Nezaniel\Syndicator\Core\Syndicator;
 use Nezaniel\Syndicator\Dto\Rss2 as Rss2;
 use Nezaniel\NodeSyndicator\Translation\Exception as Exception;
@@ -37,24 +36,6 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 
 	const ITEMGUIDMODE_PERMALINK = 'permalink';
 	const ITEMGUIDMODE_IDENTIFIER = 'identifier';
-
-
-	/**
-	 * @var UriBuilder
-	 */
-	protected $uriBuilder;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeService
-	 */
-	protected $nodeService;
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Resource\Publishing\ResourcePublisher
-	 */
-	protected $resourcePublisher;
 
 
 	/**
@@ -110,8 +91,8 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 
 		$channel = new Rss2\Channel(
 			$this->getMappedProperty('title'),
-			$this->getRssUri($channelNode),
-			$this->nodeService->extractDescription($channelNode, Syndicator::FORMAT_RSS2, 'channel')
+			$this->getSyndicationUri($channelNode, Syndicator::FORMAT_RSS2),
+			strip_tags($this->nodeService->extractDescription($channelNode, Syndicator::FORMAT_RSS2, 'channel'))
 		);
 
 		//$channel->setLanguage($channelNode->getContext()->getDimensions()['locale']);
@@ -147,6 +128,7 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 				$channel->addDayToSkip($dayToSkip);
 			}
 		}
+		$channel->setAtomLink($this->getSyndicationUri($channelNode, Syndicator::FORMAT_RSS2, 'channel'));
 
 		$items = new \SplObjectStorage();
 		$itemNodes = $this->nodeService->getItemNodes($channelNode, $channelConfiguration['itemFilter'], $channelConfiguration['itemsRecursive']);
@@ -170,10 +152,8 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 	 * @return Rss2\Item|NULL
 	 * @todo handle categories
 	 * @todo handle pubDate: lastChanged in TYPO3CR?
-	 * @todo handle guid modes via itemConfiguration
 	 */
 	public function translateNodeToItem(NodeInterface $itemNode, Rss2\Channel $channel) {
-		$itemConfiguration = $itemNode->getNodeType()->getConfiguration('syndication.rss2.item');
 		$this->mappedNodePropertyExtractor->reset()->initialize($itemNode, Syndicator::FORMAT_RSS2, 'item');
 
 		$title = $this->mappedNodePropertyExtractor->extractMappedProperty('title');
@@ -203,8 +183,10 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 					$enclosure->getResource()->getMediaType()
 				));
 			}
-			/** @todo handle different guid modes */
-			$item->setGuid($itemNode->getIdentifier());
+			$idMode = $itemNode->getNodeType()->getConfiguration('syndication.' . Syndicator::FORMAT_RSS2 . '.item.idMode');
+			$item->setPermaLink(!($idMode === self::IDMODE_IDENTIFIER));
+			$item->setGuid($this->translateNodeToId($itemNode, Syndicator::FORMAT_RSS2, 'item'));
+
 			$item->setSource(new Rss2\Source(
 				$channel->getTitle(),
 				$channel->getLink()
@@ -213,45 +195,6 @@ class NodeToRss2Translator extends AbstractNodeToFeedTranslator {
 			return $item;
 		}
 		return NULL;
-	}
-
-	/**
-	 * @param NodeInterface $parentNode
-	 * @return string
-	 */
-	protected function collapseDescriptionNodes(NodeInterface $parentNode) {
-		$description = '';
-		$descriptionContentNodes = $parentNode->getChildNodes('TYPO3.Neos.NodeTypes:Text');
-		if (sizeof($descriptionContentNodes) > 0) {
-			foreach ($descriptionContentNodes as $i => $descriptionContentNode) {
-				/** @var NodeInterface $descriptionContentNode */
-				$description .= $descriptionContentNode->getProperty('text');
-
-				if ($i < sizeof($descriptionContentNodes)-1) {
-					$description .= "\n";
-				}
-			}
-		}
-		return $description;
-	}
-
-	/**
-	 * @param NodeInterface $node
-	 * @return string
-	 * @todo Find out how to use UriBuilder's setFormat without throwing an exception
-	 */
-	protected function getRssUri(NodeInterface $node) {
-		$rssNodeUri = $this->uriBuilder->reset()->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.Neos');
-		$rssNodeUri = substr($rssNodeUri, 0, strrpos($rssNodeUri, '.')+1) . 'rss2';
-		return $rssNodeUri;
-	}
-
-	/**
-	 * @param string $propertyName
-	 * @return mixed|NULL
-	 */
-	protected function getMappedProperty($propertyName) {
-		return $this->mappedNodePropertyExtractor->extractMappedProperty($propertyName);
 	}
 
 }

@@ -12,12 +12,10 @@ namespace Nezaniel\NodeSyndicator\Translation;
  *                                                                          */
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Nezaniel\Syndicator\Dto\Atom\Feed;
-use Nezaniel\Syndicator\Dto\Atom\Generator;
-use Nezaniel\Syndicator\Dto\Atom\Link;
-use Nezaniel\Syndicator\Dto\Atom\Person;
-use Nezaniel\Syndicator\Dto\Atom\Text;
+use Nezaniel\Syndicator\Core\Syndicator;
+use Nezaniel\Syndicator\Dto\Atom as Atom;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Mvc\Routing\UriBuilder;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
@@ -25,28 +23,70 @@ use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  *
  * @Flow\Scope("singleton")
  */
-class NodeToAtomTranslator {
+class NodeToAtomTranslator extends AbstractNodeToFeedTranslator {
 
-	public function translateNodeToFeed(NodeInterface $node) {
-		$atomFeed = new Feed(
-			$node->getIdentifier(),
-			new Text('text', $node->getName()),
-			new \DateTime(),
-			//$node->getLastChanged(),
-			$this->translateNodeToPersonCollection($node, 'authors', 'author'),
-			$this->translateNodeToLink($node),
-			NULL,
-			NULL,
-			new Generator('Feeder powered by TYPO3.Neos', 'https://github.com/nezaniel/Nezaniel.Feeder', '0.1.0dev'),
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			array(
-				'content' => 'http://purl.org/rss/1.0/modules/content/'
-			)
+	/**
+	 * @param NodeInterface $node
+	 * @param UriBuilder $uriBuilder
+	 * @return Atom\Feed
+	 */
+	public function translateNodeToFeed(NodeInterface $node, UriBuilder $uriBuilder) {
+		$this->uriBuilder = clone $uriBuilder;
+		$this->mappedNodePropertyExtractor->reset()->initialize($node, Syndicator::FORMAT_ATOM, 'feed');
+		$feedConfiguration = $node->getNodeType()->getConfiguration('syndication.' . Syndicator::FORMAT_ATOM . '.feed');
+
+		$atomFeed = new Atom\Feed(
+			$this->translateNodeToId($node, Syndicator::FORMAT_ATOM, 'feed'),
+			new Atom\Text('text', $this->mappedNodePropertyExtractor->extractMappedProperty('title')),
+			new \DateTime()
 		);
+		$atomFeed->addLink(new Atom\Link(
+			$this->getSyndicationUri($node, Syndicator::FORMAT_ATOM),
+			Atom\Link::REL_SELF
+		));
+		$atomFeed->setGenerator(new Atom\Generator(
+			'Nezaniel.NodeSyndicator powered by TYPO3.Neos',
+			'https://github.com/nezaniel/Nezaniel.NodeSyndicator',
+			'0.1.0'
+		));
+
+		$entries = new \SplObjectStorage();
+		$entryNodes = $this->nodeService->getItemNodes($node, $feedConfiguration['entryFilter'], $feedConfiguration['entriesRecursive']);
+		if (sizeof($entryNodes) > 0) {
+			foreach ($entryNodes as $entryNode) {
+				if (($entry = $this->translateNodeToEntry($entryNode)) instanceof Atom\Entry) {
+					$entries->attach($entry);
+				}
+			}
+		}
+		$atomFeed->setEntries($entries);
+
 		return $atomFeed;
+	}
+
+	/**
+	 * @param NodeInterface $node
+	 * @return Atom\Entry
+	 * @todo Use something more useful for "updated", like Node::lastChanged
+	 */
+	public function translateNodeToEntry(NodeInterface $node) {
+		$this->mappedNodePropertyExtractor->reset()->initialize($node, Syndicator::FORMAT_ATOM, 'entry');
+
+		try {
+			$entry = new Atom\Entry(
+				$this->translateNodeToId($node, Syndicator::FORMAT_ATOM, 'entry'),
+				new Atom\Text('text', $this->mappedNodePropertyExtractor->extractMappedProperty('title')),
+				new \DateTime() // updated
+			);
+
+			$entry->setContent(new Atom\Content(
+				'xhtml',
+				'<div xmlns="http://www.w3.org/1999/xhtml">' . $this->nodeService->extractDescription($node, Syndicator::FORMAT_ATOM, 'entry') . '</div>'
+			));
+			return $entry;
+		} catch(\Exception $exception) {
+			return NULL;
+		}
 	}
 
 

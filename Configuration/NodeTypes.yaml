@@ -15,6 +15,18 @@
         propertyMapping:
           title: 'title'
           descriptionMode: 'primaryContent'
+    atom:
+      feed:
+        mode: 'self'
+        entryFilter: 'TYPO3.Neos:Document'
+        entriesRecursive: FALSE
+        propertyMapping:
+          descriptionMode: 'primaryContent'
+          title: 'title'
+      entry:
+        propertyMapping:
+          descriptionMode: 'primaryContent'
+          title: 'title'
 
 'TYPO3.Neos:ContentCollection':
   syndicator:
