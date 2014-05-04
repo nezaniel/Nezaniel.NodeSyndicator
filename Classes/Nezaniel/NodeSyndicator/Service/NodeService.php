@@ -71,6 +71,8 @@ class NodeService {
 						return $this->collapseTextNodes($descriptionNode);
 				}
 				return NULL;
+			default:
+				return NULL;
 		}
 	}
 

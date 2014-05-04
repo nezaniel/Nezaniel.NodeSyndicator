@@ -1,27 +1,36 @@
 #
-# Default subroutes configuration for the Feeder package
-# Copy this before the TYPO3.Neos subroutes in your project's Routes.yaml
-#
+# Routes configuration for the Nezaniel.NodeSyndicator package
+# Copy the following uncommented lines to your Routes.yaml for activation:
+#-
+#  name: 'Nezaniel.NodeSyndicator: RSS2 and Atom syndication'
+#   uriPattern: '<NezanielNodeSyndicatorSubroutes>'
+#   subRoutes:
+#     'NezanielNodeSyndicatorSubroutes':
+#      package: 'Nezaniel.NodeSyndicator'
 
+##
+# RSS2 syndication subroute
 -
-  name: 'RSS 2.0 Syndication'
+  name: 'RSS2 Syndication'
   uriPattern: '{node}.rss2'
   defaults:
-    '@package': 'Nezaniel.NodeSyndicator'
-    '@controller': 'Node'
-    '@action': 'syndicate'
+    '@package': 'TYPO3.Neos'
+    '@controller': 'Frontend\Node'
+    '@action': 'show'
     '@format': 'rss2'
   routeParts:
     node:
       handler: TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface
 
+##
+# Atom syndication subroute
 -
   name: 'Atom Syndication'
   uriPattern: '{node}.atom'
   defaults:
-    '@package': 'Nezaniel.NodeSyndicator'
-    '@controller': 'Node'
-    '@action': 'syndicate'
+    '@package': 'TYPO3.Neos'
+    '@controller': 'Frontend\Node'
+    '@action': 'show'
     '@format': 'atom'
   routeParts:
     node:

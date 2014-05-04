@@ -1,8 +1,0 @@
-resources:
-  methods:
-    Nezaniel_Syndicator_Syndicate: 'method(Nezaniel\NodeSyndicator\Controller\NodeController->(syndicate)Action())'
-
-acls:
-  Everybody:
-    methods:
-      Nezaniel_Syndicator_Syndicate: GRANT

@@ -17,11 +17,17 @@
           descriptionMode: 'primaryContent'
     atom:
       feed:
-        mode: 'self'
+        feedMode: 'self'
+
+        idMode: 'uuid'
+
+        contributors:
+
+        entryMode: 'self'
         entryFilter: 'TYPO3.Neos:Document'
         entriesRecursive: FALSE
+        descriptionMode: 'primaryContent'
         propertyMapping:
-          descriptionMode: 'primaryContent'
           title: 'title'
       entry:
         propertyMapping:

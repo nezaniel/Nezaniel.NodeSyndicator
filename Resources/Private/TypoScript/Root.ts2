@@ -1,0 +1,57 @@
+prototype(Nezaniel.NodeSyndicator:Atom.Entry) >
+prototype(Nezaniel.NodeSyndicator:Atom.Entry) {
+    @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\EntryImplementation'
+    node = ${node}
+
+    TYPO3NeosNodeTypes:Page {
+        idMode = 'url'
+        title = ${q(node).property('title')}
+        content = PrimaryContent {
+            nodePath = 'main'
+        }
+    }
+}
+
+prototype(Nezaniel.NodeSyndicator:Atom.EntryCollection) >
+prototype(Nezaniel.NodeSyndicator:Atom.EntryCollection) {
+    @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\EntryCollectionImplementation'
+}
+
+prototype(Nezaniel.NodeSyndicator:Atom.Feed) >
+prototype(Nezaniel.NodeSyndicator:Atom.Feed) {
+    @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\FeedImplementation'
+    node = ${node}
+
+    TYPO3NeosNodeTypes:Page {
+        idMode = 'uuid'
+        title = ${q(node).property('title')}
+        generator = Nezaniel.NodeSyndicator:Atom.Generator
+        logo = ${q(node).find('[instanceof TYPO3.Neos.NodeTypes:Image]').get(0)}
+
+        entries = TYPO3.TypoScript.Collection {
+            collection = ${q(node).children('[instanceof TYPO3.Neos.NodeTypes:Page]')}
+            itemName = 'node'
+            itemRenderer = Nezaniel.NodeSyndicator:Atom.Entry {
+                node = ${node}
+            }
+        }
+    }
+
+    LelesysNews:Folder {
+        idMode = 'url'
+        title = ${!String.isBlank(q(node).property('feedTitle')) ? q(node).property('feedTitle') : q(node).property('title')}
+        generator = Nezaniel.NodeSyndicator:Atom.Generator {
+            name = 'Nezaniel.NodeSyndicator powered by Lelesys.News and TYPO3.Neos'
+        }
+    }
+
+}
+
+prototype(Nezaniel.NodeSyndicator:Atom.Generator) >
+prototype(Nezaniel.NodeSyndicator:Atom.Generator) {
+    @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\GeneratorImplementation'
+
+    name = 'Nezaniel.NodeSyndicator powered by TYPO3.Neos'
+    uri = 'https://github.com/nezaniel/Nezaniel.NodeSyndicator'
+    version = '0.1.0'
+}

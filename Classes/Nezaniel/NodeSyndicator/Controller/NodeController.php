@@ -10,10 +10,11 @@ namespace Nezaniel\NodeSyndicator\Controller;
  *                                                                          *
  * The TYPO3 project - inspiring people to share!                           *
  *                                                                          */
+use Nezaniel\NodeSyndicator\Dto\Atom\FeedFacade as AtomFeedFacade;
 use Nezaniel\NodeSyndicator\Service\NodeInformationService;
-use Nezaniel\NodeSyndicator\Translation\NodeToAtomTranslator;
 use Nezaniel\NodeSyndicator\Translation\NodeToRss2Translator;
 use Nezaniel\Syndicator\Core\Syndicator;
+use Nezaniel\Syndicator\View\AtomRenderer;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
@@ -26,12 +27,6 @@ class NodeController extends ActionController {
 	 * @var NodeInformationService
 	 */
 	protected $nodeInformationService;
-
-	/**
-	 * @Flow\Inject
-	 * @var NodeToAtomTranslator
-	 */
-	protected $nodeToAtomTranslator;
 
 	/**
 	 * @Flow\Inject
@@ -54,9 +49,9 @@ class NodeController extends ActionController {
 						header('Content-Type:' . Syndicator::CONTENTTYPE_RSS2);
 						exit($feed->xmlSerialize());
 					case Syndicator::FORMAT_ATOM:
-						$feed = $this->nodeToAtomTranslator->translateNodeToFeed($node, $this->uriBuilder);
-						header('Content-Type:' . Syndicator::CONTENTTYPE_ATOM);
-						exit($feed->xmlSerialize());
+						$feedRenderer = new AtomRenderer(new AtomFeedFacade($node));
+						//header('Content-Type:' . Syndicator::CONTENTTYPE_ATOM);
+						exit($feedRenderer->render());
 					default:
 					throw new PageNotFoundException();
 				}

@@ -1,5 +1,5 @@
 <?php
-namespace Nezaniel\NodeSyndicator\Translation;
+namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
 
 /*                                                                          *
  * This script belongs to the TYPO3 Flow package "Nezaniel.NodeSyndicator". *
@@ -10,20 +10,27 @@ namespace Nezaniel\NodeSyndicator\Translation;
  *                                                                          *
  * The TYPO3 project - inspiring people to share!                           *
  *                                                                          */
-use Nezaniel\Syndicator\Core\AbstractXmlWriterSerializable;
-use TYPO3\Flow\Mvc\Routing\UriBuilder;
-use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use Nezaniel\Syndicator\Dto\Atom as Atom;
+use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 
 /**
- * The interface for node to feed translators
+ * A TypoScript object implementation to render Atom generators
+ *
+ * @Flow\Scope("prototype")
  */
-interface NodeToFeedTranslatorInterface {
+class GeneratorImplementation extends AbstractArrayTypoScriptObject {
 
 	/**
-	 * @param NodeInterface $node
-	 * @param UriBuilder $uriBuilder
-	 * @return AbstractXmlWriterSerializable
+	 * @return Atom\GeneratorInterface
 	 */
-	public function translateNodeToFeed(NodeInterface $node, UriBuilder $uriBuilder);
+	public function evaluate() {
+		$generator = new Atom\Generator(
+			$this->tsValue('name'),
+			$this->tsValue('uri'),
+			$this->tsValue('version')
+		);
+		return $generator->xmlSerialize();
+	}
 
 }
