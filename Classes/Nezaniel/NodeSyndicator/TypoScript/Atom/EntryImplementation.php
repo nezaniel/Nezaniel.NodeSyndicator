@@ -18,72 +18,7 @@ use TYPO3\Flow\Annotations as Flow;
  *
  * @Flow\Scope("prototype")
  */
-class EntryImplementation extends AbstractAtomFacade implements Atom\EntryInterface {
-
-	/**
-	 * @var \SplObjectStorage<Atom\Person>
-	 */
-	protected $authors;
-
-	/**
-	 * @var \SplObjectStorage<Atom\Category>
-	 */
-	protected $categories;
-
-	/**
-	 * @var Atom\Content;
-	 */
-	protected $content;
-
-
-	/**
-	 * @return \SplObjectStorage<Atom\Person>
-	 */
-	public function getAuthors() {
-		return $this->authors;
-	}
-
-	/**
-	 * @param \SplObjectStorage $authors
-	 */
-	public function setAuthors(\SplObjectStorage $authors) {
-		$this->authors = $authors;
-	}
-
-	/**
-	 * @return \SplObjectStorage<Atom\Category>
-	 */
-	public function getCategories() {
-		return $this->categories;
-	}
-
-	/**
-	 * @param \SplObjectStorage $categories
-	 */
-	public function setCategories(\SplObjectStorage $categories) {
-		$this->categories = $categories;
-	}
-
-	/**
-	 * @return Atom\Content
-	 */
-	public function getContent() {
-		return $this->content;
-	}
-
-	/**
-	 * @param \Nezaniel\Syndicator\Dto\Atom\Content $content
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
-
-	/**
-	 * @return \Traversable<Person>
-	 */
-	public function getContributors() {
-		// TODO: Implement getContributors() method.
-	}
+class EntryImplementation extends AbstractAtomFacade implements Atom\InlineRenderableEntryInterface {
 
 	/**
 	 * @return string
@@ -93,44 +28,9 @@ class EntryImplementation extends AbstractAtomFacade implements Atom\EntryInterf
 	}
 
 	/**
-	 * @return \Traversable<Link>
+	 * @return string
 	 */
-	public function getLinks() {
-		// TODO: Implement getLinks() method.
-	}
-
-	/**
-	 * @return \DateTime
-	 */
-	public function getPublished() {
-		// TODO: Implement getPublished() method.
-	}
-
-	/**
-	 * @return Atom\Text
-	 */
-	public function getRights() {
-		// TODO: Implement getRights() method.
-	}
-
-	/**
-	 * @return Atom\Feed
-	 */
-	public function getSource() {
-		// TODO: Implement getSource() method.
-	}
-
-	/**
-	 * @return Atom\Text
-	 */
-	public function getSummary() {
-		return $this->renderText('summary', 'text');
-	}
-
-	/**
-	 * @return Atom\Text
-	 */
-	public function getTitle() {
+	public function renderTitle() {
 		return $this->renderText('title', 'title');
 	}
 
@@ -142,13 +42,74 @@ class EntryImplementation extends AbstractAtomFacade implements Atom\EntryInterf
 		return new \DateTime();
 	}
 
+	/**
+	 * @return string
+	 */
+	public function renderAuthors() {
+		return $this->tsValue('authors');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function renderContent() {
+		return $this->tsValue('content');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function renderLinks() {
+		return $this->tsValue('links');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function renderSummary() {
+		return $this->tsValue('summary');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function renderCategories() {
+		return $this->tsValue('categories');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function renderContributors() {
+		return $this->tsValue('contributors');
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getPublished() {
+		return $this->tsValue('published');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function renderSource() {
+		return $this->tsValue('source');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function renderRights() {
+		return $this->renderText('rights');
+	}
+
 
 	/**
 	 * @return string
 	 */
 	public function evaluate() {
-		$content = $this->tsValue('content');
-		if ($content !== NULL) $this->setContent(new Atom\Content(Atom\Content::TYPE_XHTML, '<div xmlns="http://www.w3.org/1999/xhtml">' .  $content . '</div>'));
 		return $this->renderer->renderEntry($this);
 	}
 
