@@ -1,10 +1,24 @@
+namespace: TypoScript = TYPO3.TypoScript
+
 prototype(Nezaniel.NodeSyndicator:Atom.Entry) >
 prototype(Nezaniel.NodeSyndicator:Atom.Entry) {
     @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\EntryImplementation'
     node = ${node}
 
+    prototype(TYPO3.Neos:ContentCollection) {
+        @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\ContentCollectionImplementation'
+    }
+    prototype(TYPO3.Neos.NodeTypes:Headline) {
+        templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/Headline.html'
+    }
+    prototype(TYPO3.Neos.NodeTypes:Text) {
+        templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/Text.html'
+    }
+    prototype(TYPO3.Neos.NodeTypes:TextWithImage) {
+        templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/TextWithImage.html'
+    }
     TYPO3NeosNodeTypes:Page {
-        idMode = 'url'
+        idMode = 'uuid'
         title = ${q(node).property('title')}
         content = PrimaryContent {
             nodePath = 'main'
@@ -12,7 +26,7 @@ prototype(Nezaniel.NodeSyndicator:Atom.Entry) {
     }
 
     CORE4EventBase:Event {
-    	idMode = 'url'
+    	idMode = 'uuid'
     	title = ${q(node).property('eventName')}
     	content = PrimaryContent {
 			nodePath = 'main'
@@ -31,7 +45,7 @@ prototype(Nezaniel.NodeSyndicator:Atom.Feed) {
         generator = Nezaniel.NodeSyndicator:Atom.Generator
         logo = ${q(node).find('[instanceof TYPO3.Neos.NodeTypes:Image]').get(0)}
 
-        entries = TypoScript.Collection {
+        entries = TypoScript:Collection {
             collection = ${q(node).children('[instanceof TYPO3.Neos.NodeTypes:Page]')}
             itemName = 'node'
             itemRenderer = Nezaniel.NodeSyndicator:Atom.Entry {
