@@ -149,7 +149,7 @@ class EntryImplementation extends AbstractAtomFacade implements Atom\EntryInterf
 	public function evaluate() {
 		$content = $this->tsValue('content');
 		if ($content !== NULL) $this->setContent(new Atom\Content(Atom\Content::TYPE_XHTML, '<div xmlns="http://www.w3.org/1999/xhtml">' .  $content . '</div>'));
-		return $this;
+		return $this->renderer->renderEntry($this);
 	}
 
 }

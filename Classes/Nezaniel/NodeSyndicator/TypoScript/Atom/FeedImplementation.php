@@ -10,6 +10,7 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
  *                                                                          *
  * The TYPO3 project - inspiring people to share!                           *
  *                                                                          */
+use Nezaniel\NodeSyndicator\Package;
 use Nezaniel\Syndicator\Core\Syndicator;
 use Nezaniel\Syndicator\Dto\Atom as Atom;
 use TYPO3\Flow\Annotations as Flow;
@@ -77,7 +78,16 @@ class FeedImplementation extends AbstractAtomFacade implements Atom\InlineRender
 	 * @return string
 	 */
 	public function renderGenerator() {
-		return $this->tsValue('generator');
+		$renderedTsGenerator = $this->tsValue('generator');
+		if ($renderedTsGenerator === '' || $renderedTsGenerator === NULL) {
+			$generator = new Atom\Generator(
+				'Nezaniel.NodeSyndicator powered by TYPO3.Neos',
+				'https://github.com/nezaniel/Nezaniel.NodeSyndicator',
+				Package::VERSION
+			);
+			return $generator->xmlSerialize();
+		}
+		return $renderedTsGenerator;
 	}
 
 	/**

@@ -10,11 +10,14 @@ prototype(Nezaniel.NodeSyndicator:Atom.Entry) {
             nodePath = 'main'
         }
     }
-}
 
-prototype(Nezaniel.NodeSyndicator:Atom.EntryCollection) >
-prototype(Nezaniel.NodeSyndicator:Atom.EntryCollection) {
-    @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\EntryCollectionImplementation'
+    CORE4EventBase:Event {
+    	idMode = 'url'
+    	title = ${q(node).property('eventName')}
+    	content = PrimaryContent {
+			nodePath = 'main'
+		}
+    }
 }
 
 prototype(Nezaniel.NodeSyndicator:Atom.Feed) >
@@ -28,7 +31,7 @@ prototype(Nezaniel.NodeSyndicator:Atom.Feed) {
         generator = Nezaniel.NodeSyndicator:Atom.Generator
         logo = ${q(node).find('[instanceof TYPO3.Neos.NodeTypes:Image]').get(0)}
 
-        entries = TYPO3.TypoScript.Collection {
+        entries = TypoScript.Collection {
             collection = ${q(node).children('[instanceof TYPO3.Neos.NodeTypes:Page]')}
             itemName = 'node'
             itemRenderer = Nezaniel.NodeSyndicator:Atom.Entry {
@@ -43,6 +46,23 @@ prototype(Nezaniel.NodeSyndicator:Atom.Feed) {
         generator = Nezaniel.NodeSyndicator:Atom.Generator {
             name = 'Nezaniel.NodeSyndicator powered by Lelesys.News and TYPO3.Neos'
         }
+    }
+
+    CORE4EventBase:SuperEvent {
+    	idMode = 'uuid'
+    	title = ${q(node).property('eventName')}
+    	generator = Nezaniel.NodeSyndicator:Atom.Generator {
+			name = 'Nezaniel.NodeSyndicator powered by CORE4.EventBase and TYPO3.Neos'
+		}
+		logo = ${q(node).property('bannerImage')}
+		entries = TYPO3.TypoScript.Collection {
+		   collection = ${q(site).find('[instanceof TYPO3.Neos.NodeTypes:Page]')}
+		   itemName = 'node'
+		   itemRenderer = Nezaniel.NodeSyndicator:Atom.Entry {
+			   node = ${node}
+		   }
+	   	}
+	   	//entries = ${q(site).find('[instanceof TYPO3.Neos.NodeTypes:Page]').count()}
     }
 
 }
