@@ -13,6 +13,7 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
 use Nezaniel\NodeSyndicator\Package;
 use Nezaniel\Syndicator\Core\Syndicator;
 use Nezaniel\Syndicator\Dto\Atom as Atom;
+use Nezaniel\Syndicator\View\AtomInlineRenderer;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Exception\PageNotFoundException;
 
@@ -22,7 +23,13 @@ use TYPO3\TYPO3CR\Exception\PageNotFoundException;
  * @Flow\Scope("prototype")
  * @todo check whether we can just extend Feed and use xmlSerialize()
  */
-class FeedImplementation extends AbstractAtomFacade implements Atom\InlineRenderableFeedInterface {
+class FeedImplementation extends AbstractAtomAdapter implements Atom\InlineRenderableFeedInterface {
+
+	/**
+	 * @var string
+	 */
+	protected $feedMode = AtomInlineRenderer::FEEDMODE_FEED;
+
 
 	/**
 	 * @return string
@@ -148,9 +155,16 @@ class FeedImplementation extends AbstractAtomFacade implements Atom\InlineRender
 		if ($this->getNode()->getNodeType()->isOfType('Nezaniel.NodeSyndicator:Syndication')
 			&& $this->getNode()->getProperty('feedAsAtom')) {
 				//header('Content-Type:' . Syndicator::CONTENTTYPE_ATOM);
-				return $this->renderer->renderFeed($this);
+				return $this->renderer->renderFeed($this, $this->getFeedMode());
 		}
 		throw new PageNotFoundException('The requested node is not configured as an Atom feed.', 1399133728);
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getFeedMode() {
+		return $this->feedMode;
 	}
 
 }

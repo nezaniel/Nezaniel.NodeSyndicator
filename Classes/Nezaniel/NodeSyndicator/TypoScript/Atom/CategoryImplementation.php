@@ -14,24 +14,23 @@ use Nezaniel\Syndicator\Dto\Atom as Atom;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A TypoScript object implementation to render Atom Persons
+ * A TypoScript object implementation to render Atom Categories
  *
  * @Flow\Scope("prototype")
  */
-class PersonImplementation extends AbstractAtomAdapter {
+class CategoryImplementation extends AbstractAtomAdapter {
 
 	/**
-	 * @return Atom\PersonInterface
+	 * @return string
 	 */
 	public function evaluate() {
-		if (($name = $this->tsValue('name')) !== NULL) {
-			$person = new Atom\Person(
-				$this->tsValue('name'),
-				$this->tsValue('uri'),
-				$this->tsValue('email')
+		if (($name = $this->tsValue('term')) !== NULL) {
+			$category = new Atom\Category(
+				$this->tsValue('term'),
+				$this->tsValue('scheme'),
+				$this->tsValue('label')
 			);
-			$person->setTagName($this->tsValue('type') !== NULL ? $this->tsValue('type') : 'author');
-			return $person->xmlSerialize();
+			return $category->xmlSerialize();
 		}
 		return '';
 	}

@@ -12,13 +12,14 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
  *                                                                          */
 use Nezaniel\Syndicator\Dto\Atom as Atom;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A TypoScript object implementation to render
  *
  * @Flow\Scope("prototype")
  */
-class EntryImplementation extends AbstractAtomFacade implements Atom\InlineRenderableEntryInterface {
+class EntryImplementation extends AbstractAtomAdapter implements Atom\InlineRenderableEntryInterface {
 
 	/**
 	 * @return string
@@ -53,21 +54,32 @@ class EntryImplementation extends AbstractAtomFacade implements Atom\InlineRende
 	 * @return string
 	 */
 	public function renderContent() {
-		return $this->tsValue('content');
+		$content = new Atom\Content(
+			Atom\ContentInterface::TYPE_HTML,
+			$this->tsValue('content')
+		);
+		return $content->xmlSerialize();
 	}
 
 	/**
 	 * @return string
 	 */
 	public function renderLinks() {
-		return $this->tsValue('links');
+		$selfLink = new Atom\Link(
+			$this->renderNodeUri('html'),
+			Atom\LinkInterface::REL_SELF
+		);
+		$links = $selfLink->xmlSerialize();
+		$links .= $this->tsValue('links');
+
+		return $links;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function renderSummary() {
-		return $this->tsValue('summary');
+		return $this->renderText('summary', 'text');
 	}
 
 	/**
@@ -95,7 +107,10 @@ class EntryImplementation extends AbstractAtomFacade implements Atom\InlineRende
 	 * @return string
 	 */
 	public function renderSource() {
-		return $this->tsValue('source');
+		if ($this->getSourceFeedIdentifier() !== $this->getFeedIdentifier()) {
+			return $this->tsValue('source');
+		}
+		return '';
 	}
 
 	/**
@@ -111,6 +126,34 @@ class EntryImplementation extends AbstractAtomFacade implements Atom\InlineRende
 	 */
 	public function evaluate() {
 		return $this->renderer->renderEntry($this);
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getFeedIdentifier() {
+		$feedIdentifier = '';
+		$currentContext = $this->tsRuntime->popContext();
+		$parentContext = $this->tsRuntime->getCurrentContext();
+		if (isset($parentContext['node'])) {
+			$feedNode = $parentContext['node'];
+			if ($feedNode instanceof NodeInterface) {
+				$feedIdentifier = $feedNode->getIdentifier();
+			}
+		}
+		$this->tsRuntime->pushContextArray($currentContext);
+		return $feedIdentifier;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getSourceFeedIdentifier() {
+		$sourceFeed = $this->tsValue('sourceFeed');
+		if ($sourceFeed instanceof NodeInterface) {
+			return $sourceFeed->getIdentifier();
+		}
+		return '';
 	}
 
 }

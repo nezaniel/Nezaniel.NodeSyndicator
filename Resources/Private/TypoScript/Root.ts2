@@ -1,10 +1,7 @@
 namespace: TypoScript = TYPO3.TypoScript
 
-prototype(Nezaniel.NodeSyndicator:Atom.Entry) >
-prototype(Nezaniel.NodeSyndicator:Atom.Entry) {
-    @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\EntryImplementation'
-    node = ${node}
-
+prototype(Nezaniel.NodeSyndicator:HtmlContentContainer) >
+prototype(Nezaniel.NodeSyndicator:HtmlContentContainer) {
     prototype(TYPO3.Neos:ContentCollection) {
         @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\ContentCollectionImplementation'
     }
@@ -17,20 +14,38 @@ prototype(Nezaniel.NodeSyndicator:Atom.Entry) {
     prototype(TYPO3.Neos.NodeTypes:TextWithImage) {
         templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/TextWithImage.html'
     }
+}
+
+prototype(Nezaniel.NodeSyndicator:Atom.Person) >
+prototype(Nezaniel.NodeSyndicator:Atom.Person) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\PersonImplementation'
+}
+
+prototype(Nezaniel.NodeSyndicator:Atom.Category) >
+prototype(Nezaniel.NodeSyndicator:Atom.Category) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\CategoryImplementation'
+}
+
+prototype(Nezaniel.NodeSyndicator:Atom.Generator) >
+prototype(Nezaniel.NodeSyndicator:Atom.Generator) {
+    @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\GeneratorImplementation'
+
+    name = 'Nezaniel.NodeSyndicator powered by TYPO3.Neos'
+    uri = 'https://github.com/nezaniel/Nezaniel.NodeSyndicator'
+    version = '0.1.0'
+}
+
+prototype(Nezaniel.NodeSyndicator:Atom.Entry) >
+prototype(Nezaniel.NodeSyndicator:Atom.Entry) < prototype(Nezaniel.NodeSyndicator:HtmlContentContainer) {
+    @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\EntryImplementation'
+    node = ${node}
+
     TYPO3NeosNodeTypes:Page {
         idMode = 'uuid'
         title = ${q(node).property('title')}
         content = PrimaryContent {
             nodePath = 'main'
         }
-    }
-
-    CORE4EventBase:Event {
-    	idMode = 'uuid'
-    	title = ${q(node).property('eventName')}
-    	content = PrimaryContent {
-			nodePath = 'main'
-		}
     }
 }
 
@@ -62,30 +77,15 @@ prototype(Nezaniel.NodeSyndicator:Atom.Feed) {
         }
     }
 
-    CORE4EventBase:SuperEvent {
-    	idMode = 'uuid'
-    	title = ${q(node).property('eventName')}
-    	generator = Nezaniel.NodeSyndicator:Atom.Generator {
-			name = 'Nezaniel.NodeSyndicator powered by CORE4.EventBase and TYPO3.Neos'
-		}
-		logo = ${q(node).property('bannerImage')}
-		entries = TYPO3.TypoScript.Collection {
-		   collection = ${q(site).find('[instanceof TYPO3.Neos.NodeTypes:Page]')}
-		   itemName = 'node'
-		   itemRenderer = Nezaniel.NodeSyndicator:Atom.Entry {
-			   node = ${node}
-		   }
-	   	}
-	   	//entries = ${q(site).find('[instanceof TYPO3.Neos.NodeTypes:Page]').count()}
-    }
-
 }
 
-prototype(Nezaniel.NodeSyndicator:Atom.Generator) >
-prototype(Nezaniel.NodeSyndicator:Atom.Generator) {
-    @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\GeneratorImplementation'
+prototype(Nezaniel.NodeSyndicator:Atom.Source) >
+prototype(Nezaniel.NodeSyndicator:Atom.Source) < prototype(Nezaniel.NodeSyndicator:Atom.Feed) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\SourceImplementation'
 
-    name = 'Nezaniel.NodeSyndicator powered by TYPO3.Neos'
-    uri = 'https://github.com/nezaniel/Nezaniel.NodeSyndicator'
-    version = '0.1.0'
+	TYPO3NeosNodeTypes:Page {
+		@override.feed = ${q(node).closest('[instanceof TYPO3.Neos.NodeTypes:Page]').get(0)}
+		title = ${q(feed).property('title')}
+	}
+
 }

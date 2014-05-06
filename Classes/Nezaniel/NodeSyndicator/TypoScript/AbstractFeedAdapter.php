@@ -19,16 +19,11 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractArrayTypoScriptObject;
 /**
  * An abstract TypoScript object implementation to render syndication feeds
  */
-abstract class AbstractFeedFacade extends AbstractArrayTypoScriptObject {
+abstract class AbstractFeedAdapter extends AbstractArrayTypoScriptObject {
 
 	const IDMODE_UUID = 'uuid';
 	const IDMODE_URL = 'url';
 
-
-	/**
-	 * @var NodeInterface
-	 */
-	protected $node;
 
 	/**
 	 * @Flow\Inject
@@ -86,8 +81,12 @@ abstract class AbstractFeedFacade extends AbstractArrayTypoScriptObject {
 	 * @return mixed
 	 */
 	protected function tsValue($path) {
-		$nodeTypeDistinctionPath = str_replace('.', '', $this->getNode()->getNodeType()->getName());
-		return parent::tsValue($nodeTypeDistinctionPath . '/' . $path);
+		if ($this->getNode() instanceof NodeInterface) {
+			$nodeTypeDistinctionPath = str_replace('.', '', $this->getNode()->getNodeType()->getName());
+			return parent::tsValue($nodeTypeDistinctionPath . '/' . $path);
+		} else {
+			return parent::tsValue($path);
+		}
 	}
 
 }

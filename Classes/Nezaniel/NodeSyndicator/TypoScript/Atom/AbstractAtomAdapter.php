@@ -10,7 +10,7 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
  *                                                                          *
  * The TYPO3 project - inspiring people to share!                           *
  *                                                                          */
-use Nezaniel\NodeSyndicator\TypoScript\AbstractFeedFacade;
+use Nezaniel\NodeSyndicator\TypoScript\AbstractFeedAdapter;
 use Nezaniel\Syndicator\Dto\Atom as Atom;
 use Nezaniel\Syndicator\View\AtomInlineRenderer;
 use TYPO3\Flow\Annotations as Flow;
@@ -18,11 +18,11 @@ use TYPO3\Media\Domain\Model\ImageVariant;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * A TypoScript object implementation to render
+ * A TypoScript object abstraction for rendering Atom constructs
  *
  * @Flow\Scope("prototype")
  */
-abstract class AbstractAtomFacade extends AbstractFeedFacade {
+abstract class AbstractAtomAdapter extends AbstractFeedAdapter {
 
 	/**
 	 * @var AtomInlineRenderer
@@ -65,7 +65,7 @@ abstract class AbstractAtomFacade extends AbstractFeedFacade {
 			return '';
 		}
 		$text = new Atom\Text(
-			($content === strip_tags($content)) ? Atom\Text::TYPE_TEXT : Atom\Text::TYPE_XHTML,
+			($content === strip_tags($content)) ? Atom\Text::TYPE_TEXT : Atom\Text::TYPE_HTML,
 			$content
 		);
 		$text->setTagName($propertyPath);

@@ -10,26 +10,26 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
  *                                                                          *
  * The TYPO3 project - inspiring people to share!                           *
  *                                                                          */
-use Nezaniel\Syndicator\Dto\Atom as Atom;
+use Nezaniel\Syndicator\View\AtomInlineRenderer;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * A TypoScript object implementation to render Atom Generators
+ * A TypoScript object implementation to render Atom Source constructs
  *
  * @Flow\Scope("prototype")
  */
-class GeneratorImplementation extends AbstractAtomAdapter {
+class SourceImplementation extends FeedImplementation {
 
 	/**
-	 * @return Atom\GeneratorInterface
+	 * @return string
 	 */
-	public function evaluate() {
-		$generator = new Atom\Generator(
-			$this->tsValue('name'),
-			$this->tsValue('uri'),
-			$this->tsValue('version')
-		);
-		return $generator->xmlSerialize();
+	public function renderTitle() {
+		return $this->renderText('title', 'title');
 	}
+
+	/**
+	 * @var string
+	 */
+	protected $feedMode = AtomInlineRenderer::FEEDMODE_SOURCE;
 
 }
