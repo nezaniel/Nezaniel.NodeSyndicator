@@ -13,6 +13,7 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
 use Nezaniel\Syndicator\Dto\Atom as Atom;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Domain\Model\NodeInterface;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * A TypoScript object implementation to render
@@ -149,7 +150,7 @@ class EntryImplementation extends AbstractAtomAdapter implements Atom\InlineRend
 	 * @return string
 	 */
 	protected function getSourceFeedIdentifier() {
-		$sourceFeed = $this->tsValue('sourceFeed');
+		$sourceFeed = AbstractTypoScriptObject::tsValue('sourceFeed');
 		if ($sourceFeed instanceof NodeInterface) {
 			return $sourceFeed->getIdentifier();
 		}

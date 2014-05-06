@@ -82,6 +82,7 @@ prototype(Nezaniel.NodeSyndicator:Atom.Feed) {
 prototype(Nezaniel.NodeSyndicator:Atom.Source) >
 prototype(Nezaniel.NodeSyndicator:Atom.Source) < prototype(Nezaniel.NodeSyndicator:Atom.Feed) {
 	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\SourceImplementation'
+	@override.node = ${sourceFeed}
 
 	TYPO3NeosNodeTypes:Page {
 		@override.feed = ${q(node).closest('[instanceof TYPO3.Neos.NodeTypes:Page]').get(0)}

@@ -21,13 +21,6 @@ use TYPO3\Flow\Annotations as Flow;
 class SourceImplementation extends FeedImplementation {
 
 	/**
-	 * @return string
-	 */
-	public function renderTitle() {
-		return $this->renderText('title', 'title');
-	}
-
-	/**
 	 * @var string
 	 */
 	protected $feedMode = AtomInlineRenderer::FEEDMODE_SOURCE;
