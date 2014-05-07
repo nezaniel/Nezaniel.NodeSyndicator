@@ -1,5 +1,5 @@
 <?php
-namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
+namespace Nezaniel\NodeSyndicator\TypoScript\Rss2;
 
 /*                                                                          *
  * This script belongs to the TYPO3 Flow package "Nezaniel.NodeSyndicator". *
@@ -10,27 +10,36 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
  *                                                                          *
  * The TYPO3 project - inspiring people to share!                           *
  *                                                                          */
-use Nezaniel\Syndicator\Dto\Atom as Atom;
+use Nezaniel\Syndicator\Dto\Rss2 as Rss2;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TYPO3CR\Exception\PageNotFoundException;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
- * A TypoScript object implementation to render Atom Generators
+ * A TypoScript object implementation to render RSS2 Feeds
  *
  * @Flow\Scope("prototype")
  */
-class GeneratorImplementation extends AbstractTypoScriptObject {
+class FeedImplementation extends AbstractRss2Adapter implements Rss2\InlineRenderableFeedInterface {
 
 	/**
-	 * @return Atom\GeneratorInterface
+	 * @return string
+	 */
+	public function renderChannel() {
+		return AbstractTypoScriptObject::tsValue('channel');
+	}
+
+	/**
+	 * @return string
+	 * @throws PageNotFoundException
 	 */
 	public function evaluate() {
-		$generator = new Atom\Generator(
-			$this->tsValue('name'),
-			$this->tsValue('uri'),
-			$this->tsValue('version')
-		);
-		return $generator->xmlSerialize();
+		if ($this->getNode()->getNodeType()->isOfType('Nezaniel.NodeSyndicator:Syndication')
+			&& $this->getNode()->getProperty('feedAsRss2')) {
+			//header('Content-Type:' . Syndicator::CONTENTTYPE_RSS2);
+			return $this->renderer->renderFeed($this);
+		}
+		throw new PageNotFoundException('The requested node is not configured as an RSS2 feed.', 1399456662);
 	}
 
 }

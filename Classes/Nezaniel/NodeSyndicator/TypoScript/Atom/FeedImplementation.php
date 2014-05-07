@@ -21,7 +21,6 @@ use TYPO3\TYPO3CR\Exception\PageNotFoundException;
  * A TypoScript object implementation to render
  *
  * @Flow\Scope("prototype")
- * @todo check whether we can just extend Feed and use xmlSerialize()
  */
 class FeedImplementation extends AbstractAtomAdapter implements Atom\InlineRenderableFeedInterface {
 

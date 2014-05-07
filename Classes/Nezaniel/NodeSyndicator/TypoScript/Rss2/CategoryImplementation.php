@@ -1,5 +1,5 @@
 <?php
-namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
+namespace Nezaniel\NodeSyndicator\TypoScript\Rss2;
 
 /*                                                                         *
  * This script belongs to the TYPO3 Flow package "Nezaniel.NodeSyndicator" *
@@ -10,29 +10,27 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
  *                                                                         *
  * The TYPO3 project - inspiring people to share!                          *
  *                                                                         */
-use Nezaniel\Syndicator\Dto\Atom as Atom;
+use Nezaniel\Syndicator\Dto\Rss2 as Rss2;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
- * A TypoScript object implementation to render Atom Persons
+ * A TypoScript object implementation to render Atom Categories
  *
  * @Flow\Scope("prototype")
  */
-class PersonImplementation extends AbstractTypoScriptObject {
+class CategoryImplementation extends AbstractTypoScriptObject {
 
 	/**
-	 * @return Atom\PersonInterface
+	 * @return string
 	 */
 	public function evaluate() {
 		if (($name = $this->tsValue('name')) !== NULL) {
-			$person = new Atom\Person(
-				$this->tsValue('name'),
-				$this->tsValue('uri'),
-				$this->tsValue('email')
+			$category = new Rss2\Category(
+				$name,
+				$this->tsValue('domain')
 			);
-			$person->setTagName($this->tsValue('type') !== NULL ? $this->tsValue('type') : 'author');
-			return $person->xmlSerialize();
+			return $category->xmlSerialize();
 		}
 		return '';
 	}

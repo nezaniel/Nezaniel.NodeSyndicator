@@ -12,13 +12,14 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
  *                                                                         */
 use Nezaniel\Syndicator\Dto\Atom as Atom;
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * A TypoScript object implementation to render Atom Categories
  *
  * @Flow\Scope("prototype")
  */
-class CategoryImplementation extends AbstractAtomAdapter {
+class CategoryImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * @return string

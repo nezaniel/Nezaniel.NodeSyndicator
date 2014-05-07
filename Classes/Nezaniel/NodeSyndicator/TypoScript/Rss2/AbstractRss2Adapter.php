@@ -1,5 +1,5 @@
 <?php
-namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
+namespace Nezaniel\NodeSyndicator\TypoScript\Rss2;
 
 /*                                                                          *
  * This script belongs to the TYPO3 Flow package "Nezaniel.NodeSyndicator". *
@@ -10,27 +10,36 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Atom;
  *                                                                          *
  * The TYPO3 project - inspiring people to share!                           *
  *                                                                          */
+use Nezaniel\NodeSyndicator\TypoScript\AbstractFeedAdapter;
 use Nezaniel\Syndicator\Dto\Atom as Atom;
+use Nezaniel\Syndicator\View\Rss2InlineRenderer;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
- * A TypoScript object implementation to render Atom Generators
+ * A TypoScript object abstraction for rendering Atom constructs
  *
  * @Flow\Scope("prototype")
  */
-class GeneratorImplementation extends AbstractTypoScriptObject {
+abstract class AbstractRss2Adapter extends AbstractFeedAdapter {
 
 	/**
-	 * @return Atom\GeneratorInterface
+	 * @var Rss2InlineRenderer
 	 */
-	public function evaluate() {
-		$generator = new Atom\Generator(
-			$this->tsValue('name'),
-			$this->tsValue('uri'),
-			$this->tsValue('version')
-		);
-		return $generator->xmlSerialize();
+	protected $renderer;
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param \TYPO3\TypoScript\Core\Runtime $tsRuntime
+	 * @param string $path
+	 * @param string $typoScriptObjectName
+	 */
+	public function __construct(\TYPO3\TypoScript\Core\Runtime $tsRuntime, $path, $typoScriptObjectName) {
+		$this->tsRuntime = $tsRuntime;
+		$this->path = $path;
+		$this->typoScriptObjectName = $typoScriptObjectName;
+		$this->renderer = new Rss2InlineRenderer();
 	}
 
 }
