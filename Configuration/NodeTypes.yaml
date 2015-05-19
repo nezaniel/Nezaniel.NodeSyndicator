@@ -1,3 +1,29 @@
+'Nezaniel.NodeSyndicator:Syndication':
+  abstract: TRUE
+  ui:
+    inspector:
+      groups:
+        syndication:
+          label: 'Syndication'
+          position: 90
+  properties:
+    feedAsRss2:
+      type: boolean
+      defaultValue: FALSE
+      ui:
+        label: 'Syndicate as RSS2'
+        inspector:
+          group: 'syndication'
+          position: 10
+    feedAsAtom:
+      type: boolean
+      defaultValue: FALSE
+      ui:
+        label: 'Syndicate as Atom'
+        inspector:
+          group: 'syndication'
+          position: 20
+
 'TYPO3.Neos:Document':
   superTypes:
     syndication: 'Nezaniel.NodeSyndicator:Syndication'
@@ -39,29 +65,3 @@
     rss2:
       channel:
         itemFilter: 'TYPO3.Neos:Content'
-
-'Nezaniel.NodeSyndicator:Syndication':
-  abstract: TRUE
-  ui:
-    inspector:
-      groups:
-        syndication:
-          label: 'Syndication'
-          position: 90
-  properties:
-    feedAsRss2:
-      type: boolean
-      defaultValue: FALSE
-      ui:
-        label: 'Syndicate as RSS2'
-        inspector:
-          group: 'syndication'
-          position: 10
-    feedAsAtom:
-      type: boolean
-      defaultValue: FALSE
-      ui:
-        label: 'Syndicate as Atom'
-        inspector:
-          group: 'syndication'
-          position: 20

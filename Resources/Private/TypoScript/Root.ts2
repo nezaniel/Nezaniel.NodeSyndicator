@@ -1,3 +1,3 @@
-include: resource://Nezaniel.NodeSyndicator/Private/TypoScript/Syndication/Common.ts2
-include: resource://Nezaniel.NodeSyndicator/Private/TypoScript/Syndication/Atom.ts2
-include: resource://Nezaniel.NodeSyndicator/Private/TypoScript/Syndication/Rss2.ts2
+include: Syndication/Common
+include: Syndication/Atom.ts2
+include: Syndication/Rss2.ts2
