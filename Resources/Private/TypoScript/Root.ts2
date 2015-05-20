@@ -1,3 +1,10 @@
-include: Syndication/Common
-include: Syndication/Atom.ts2
-include: Syndication/Rss2.ts2
+namespace: Nodes=TYPO3.Neos.NodeTypes
+namespace: Syn=Nezaniel.NodeSyndicator
+namespace: TS=TYPO3.TypoScript
+
+include: Prototypes/Common/*
+include: Prototypes/Atom/*
+include: Prototypes/Rss2/*
+
+include: RenderPaths/Atom.ts2
+include: RenderPaths/Rss2.ts2

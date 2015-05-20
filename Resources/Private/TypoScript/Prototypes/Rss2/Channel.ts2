@@ -1,0 +1,18 @@
+prototype(Syn:Rss2.Channel) < prototype(Syn:HtmlContentContainer) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Rss2\\ChannelImplementation'
+	@override.channel = ${documentNode}
+
+	idMode = 'url'
+	title = ${q(channel).property('title')}
+	logo = ${q(channel).find('[instanceof TYPO3.Neos.NodeTypes:Image]').get(0)}
+
+	items = TS:Collection {
+		collection = ${q(node).children('[instanceof TYPO3.Neos.NodeTypes:Page]')}
+		itemName = 'page'
+		itemRenderer = Syn:Rss2.Item {
+			@override.item = ${page}
+			node = ${item}
+			channel = ${channel}
+		}
+	}
+}

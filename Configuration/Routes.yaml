@@ -1,37 +1,33 @@
-#
-# Routes configuration for the Nezaniel.NodeSyndicator package
-# Copy the following uncommented lines to your Routes.yaml for activation:
-#-
-#  name: 'Nezaniel.NodeSyndicator: RSS2 and Atom syndication'
-#   uriPattern: '<NezanielNodeSyndicatorSubroutes>'
-#   subRoutes:
-#     'NezanielNodeSyndicatorSubroutes':
-#      package: 'Nezaniel.NodeSyndicator'
+#                                                                        #
+# Default subroutes configuration for the Nezaniel.NodeSyndicator        #
+#                                                                        #
 
 ##
-# RSS2 syndication subroute
--
-  name: 'RSS2 Syndication'
-  uriPattern: '{node}.rss2'
-  defaults:
-    '@package': 'TYPO3.Neos'
-    '@controller': 'Frontend\Node'
-    '@action': 'show'
-    '@format': 'rss2'
-  routeParts:
-    node:
-      handler: TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface
+# Atom
 
-##
-# Atom syndication subroute
 -
-  name: 'Atom Syndication'
+  name:  'Atom'
   uriPattern: '{node}.atom'
   defaults:
-    '@package': 'TYPO3.Neos'
+    '@package':    'TYPO3.Neos'
     '@controller': 'Frontend\Node'
-    '@action': 'show'
-    '@format': 'atom'
+    '@action':     'show'
+    '@format':     'atom'
   routeParts:
-    node:
-      handler: TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface
+    'node':
+      handler:     'TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface'
+
+##
+# RSS2
+
+-
+  name:  'RSS2'
+  uriPattern: '{node}.rss2'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Frontend\Node'
+    '@action':     'show'
+    '@format':     'rss2'
+  routeParts:
+    'node':
+      handler:     'TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface'

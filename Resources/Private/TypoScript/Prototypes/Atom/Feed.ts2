@@ -1,0 +1,32 @@
+prototype(Syn:Atom.Feed) < prototype(TS:Http.Message) {
+	httpResponseHead {
+		headers.Content-Type = 'application/atom+xml;charset=utf-8'
+	}
+	content = TS:Case {
+		page {
+			@position = 'start'
+			condition = ${q(documentNode).is('[instanceof TYPO3.Neos.NodeTypes:Page]')}
+			renderer = Syn:Atom.FeedContent
+		}
+	}
+}
+
+prototype(Syn:Atom.FeedContent) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\FeedImplementation'
+	@override.feed = ${documentNode}
+	node = ${feed}
+
+	idMode = 'uuid'
+	title = ${q(feed).property('title')}
+	generator = Syn:Atom.Generator
+	logo = ${q(feed).find('[instanceof TYPO3.Neos.NodeTypes:Image]').get(0)}
+
+	entries = TS:Collection {
+		collection = ${q(feed).children('[instanceof TYPO3.Neos.NodeTypes:Page]')}
+		itemName = 'page'
+		itemRenderer = Syn:Atom.Entry {
+			@override.entry = ${page}
+			feed = ${feed}
+		}
+	}
+}

@@ -1,0 +1,3 @@
+prototype(Syn:Atom.Person) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\PersonImplementation'
+}

@@ -1,0 +1,7 @@
+prototype(Syn:Atom.Generator) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\GeneratorImplementation'
+
+	name = 'Nezaniel.NodeSyndicator powered by TYPO3.Neos'
+	uri = 'https://github.com/nezaniel/Nezaniel.NodeSyndicator'
+	version = '0.1.0'
+}

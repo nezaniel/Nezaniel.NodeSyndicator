@@ -1,0 +1,31 @@
+prototype(Syn:Atom.Entry) < prototype(Syn:HtmlContentContainer) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\EntryImplementation'
+	@override.entry = ${node}
+	node = ${entry}
+
+	idMode = 'uuid'
+	title = ${q(entry).property('title')}
+	content = ContentCollection {
+		@override.contentCollectionNode = ${Neos.Node.nearestContentCollection(entry, 'main')}
+	}
+	source = Syn:Atom.Source {
+		node = ${entry}
+	}
+
+	prototype(ContentCollection) {
+		@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\ContentCollectionImplementation'
+
+		prototype(Nodes:Text) {
+			templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/Text.html'
+		}
+		prototype(Nodes:Headline) {
+			templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/Headline.html'
+		}
+		prototype(Nodes:TextWithImage) {
+			templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/TextWithImage.html'
+		}
+		prototype(Nodes:Image) {
+			templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/Image.html'
+		}
+	}
+}

@@ -1,0 +1,6 @@
+prototype(Syn:Atom.Source) < prototype(Syn:Atom.Feed) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Atom\\SourceImplementation'
+
+	node = ${documentNode}
+	title = ${q(node).property('title')}
+}

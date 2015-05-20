@@ -1,0 +1,32 @@
+prototype(Syn:Rss2.Feed) < prototype(TS:Http.Message) {
+	httpResponseHead {
+		headers.Content-Type = 'application/rss+xml;charset=utf-8'
+	}
+	content = TS:Case {
+		page {
+			@position = 'start'
+			condition = ${q(documentNode).is('[instanceof TYPO3.Neos.NodeTypes:Page]')}
+			renderer = Syn:Atom.FeedContent
+		}
+	}
+}
+
+prototype(Syn:Rss2.FeedContent) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Rss2\\FeedImplementation'
+	@override.feed = ${documentNode}
+	node = ${feed}
+
+	channel = Syn:Rss2.Channel {
+		title = ${q(feed).property('title')}
+		node = ${feed}
+
+		items = TS:Collection {
+			collection = ${q(feed).children('[instanceof TYPO3.Neos.NodeTypes:Page]')}
+			itemName = 'page'
+			itemRenderer = Syn:Rss2.Item {
+				@override.item = ${page}
+				feed = ${feed}
+			}
+		}
+	}
+}

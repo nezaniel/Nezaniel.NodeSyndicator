@@ -1,0 +1,12 @@
+prototype(Syn:Rss2.Item) < prototype(Syn:HtmlContentContainer) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Rss2\\ItemImplementation'
+	@override.item = ${node}
+	node = ${item}
+
+	idMode = 'url'
+	title = ${q(item).property('title')}
+	source = Syn:Rss2.Source {
+		node = ${channel}
+		title = ${q(channel).property('title')}
+	}
+}

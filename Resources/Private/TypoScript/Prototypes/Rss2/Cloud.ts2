@@ -1,0 +1,3 @@
+prototype(Syn:Rss2.Cloud) {
+	@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\Rss2\\CloudImplementation'
+}
