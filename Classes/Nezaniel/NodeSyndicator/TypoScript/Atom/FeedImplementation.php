@@ -15,7 +15,6 @@ use Nezaniel\Syndicator\Core\Syndicator;
 use Nezaniel\Syndicator\Dto\Atom as Atom;
 use Nezaniel\Syndicator\View\AtomInlineRenderer;
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\TYPO3CR\Exception\PageNotFoundException;
 
 /**
  * A TypoScript object implementation to render
@@ -148,16 +147,11 @@ class FeedImplementation extends AbstractAtomAdapter implements Atom\InlineRende
 	 * Render the properties defined via TypoScript as an Atom Feed
 	 *
 	 * @return string
-	 * @throws PageNotFoundException
 	 */
 	public function evaluate() {
-		if ($this->getNode()->getNodeType()->isOfType('Nezaniel.NodeSyndicator:Syndication')
-			&& $this->getNode()->getProperty('feedAsAtom')) {
-				//header('Content-Type:' . Syndicator::CONTENTTYPE_ATOM);
-				return $this->renderer->renderFeed($this, $this->getFeedMode());
-		}
-		throw new PageNotFoundException('The requested node is not configured as an Atom feed.', 1399133728);
+		return $this->renderer->renderFeed($this, $this->getFeedMode());
 	}
+
 
 	/**
 	 * @return string

@@ -107,7 +107,7 @@ class ChannelImplementation extends AbstractRss2Adapter implements Rss2\InlineRe
 
 	/**
 	 * @return string
-	 * @todo automatize this once Neos fully supports locale dimensions
+	 * @todo automatize this
 	 */
 	public function getLanguage() {
 		return $this->tsValue('language');

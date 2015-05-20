@@ -27,7 +27,7 @@ class CategoryImplementation extends AbstractTypoScriptObject {
 	public function evaluate() {
 		if (($name = $this->tsValue('term')) !== NULL) {
 			$category = new Atom\Category(
-				$this->tsValue('term'),
+				$name,
 				$this->tsValue('scheme'),
 				$this->tsValue('label')
 			);

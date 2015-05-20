@@ -33,12 +33,7 @@ class FeedImplementation extends AbstractRss2Adapter implements Rss2\InlineRende
 	 * @throws PageNotFoundException
 	 */
 	public function evaluate() {
-		if ($this->getNode()->getNodeType()->isOfType('Nezaniel.NodeSyndicator:Syndication')
-			&& $this->getNode()->getProperty('feedAsRss2')) {
-			//header('Content-Type:' . Syndicator::CONTENTTYPE_RSS2);
-			return $this->renderer->renderFeed($this);
-		}
-		throw new PageNotFoundException('The requested node is not configured as an RSS2 feed.', 1399456662);
+		return $this->renderer->renderFeed($this);
 	}
 
 }

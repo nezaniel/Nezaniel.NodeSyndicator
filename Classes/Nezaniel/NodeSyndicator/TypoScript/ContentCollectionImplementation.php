@@ -19,7 +19,7 @@ use TYPO3\TypoScript\TypoScriptObjects\AbstractCollectionImplementation;
 class ContentCollectionImplementation extends \TYPO3\Neos\TypoScript\ContentCollectionImplementation {
 
 	/**
-	 * Bypass \TYPO3\Neos\TypoScript\ContentCollectionImplementation's evaluation to prevent rendering of wrapping tags in Syndication context
+	 * Bypass the default evaluation to prevent rendering of wrapping tags in Syndication context
 	 *
 	 * @return string
 	 */

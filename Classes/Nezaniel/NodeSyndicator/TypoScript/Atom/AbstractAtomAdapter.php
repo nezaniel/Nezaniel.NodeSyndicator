@@ -61,7 +61,7 @@ abstract class AbstractAtomAdapter extends AbstractFeedAdapter {
 			$content = $value->getProperty($nodeProperty);
 		}
 
-		if ($content === '' || $content === NULL) {
+		if (empty($content)) {
 			return '';
 		}
 		$text = new Atom\Text(
