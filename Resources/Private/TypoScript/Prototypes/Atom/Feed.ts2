@@ -29,4 +29,18 @@ prototype(Syn:Atom.FeedContent) {
 			feed = ${feed}
 		}
 	}
+
+	@cache {
+		mode = 'cached'
+		maximumLifetime = '3600'
+
+		entryIdentifier {
+			node = ${node}
+		}
+
+		entryTags {
+			# Whatever collection is used as entries, the feed should adapt if anything changes
+			node = ${'Everything'}
+		}
+	}
 }
