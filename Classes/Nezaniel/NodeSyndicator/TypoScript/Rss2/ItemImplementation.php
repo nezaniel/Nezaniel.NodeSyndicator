@@ -76,7 +76,7 @@ class ItemImplementation extends AbstractRss2Adapter implements Rss2\InlineRende
 	 * @return boolean
 	 */
 	public function getPermaLink() {
-		return ($this->tsValue('idMode') === self::IDMODE_URL);
+		return ($this->tsValue('idMode') === self::IDMODE_UUID);
 	}
 
 	/**
