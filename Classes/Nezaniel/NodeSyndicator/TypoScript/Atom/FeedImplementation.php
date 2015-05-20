@@ -52,14 +52,19 @@ class FeedImplementation extends AbstractAtomAdapter implements Atom\InlineRende
 
 	/**
 	 * @return string
-	 * @todo auto-handle locales, once Neos completely supports them
+	 * @todo auto-handle locales
 	 */
 	public function renderLinks() {
 		$selfLink = new Atom\Link(
 			$this->renderNodeUri(Syndicator::FORMAT_ATOM),
 			Atom\LinkInterface::REL_SELF
 		);
+		$htmlLink = new Atom\Link(
+			$this->renderNodeUri('html'),
+			Atom\LinkInterface::REL_ALTERNATE
+		);
 		$links = $selfLink->xmlSerialize();
+		$links .= $htmlLink->xmlSerialize();
 		$links .= $this->tsValue('links');
 
 		return $links;
