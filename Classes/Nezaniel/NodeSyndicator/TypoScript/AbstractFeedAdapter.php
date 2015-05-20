@@ -66,7 +66,7 @@ abstract class AbstractFeedAdapter extends AbstractArrayTypoScriptObject {
 	 * @return NULL|NodeInterface
 	 */
 	protected function getNode() {
-		return parent::tsValue('node');
+		return $this->tsValue('node');
 	}
 
 	/**
@@ -74,19 +74,6 @@ abstract class AbstractFeedAdapter extends AbstractArrayTypoScriptObject {
 	 */
 	protected function getUriBuilder() {
 		return $this->tsRuntime->getControllerContext()->getUriBuilder();
-	}
-
-	/**
-	 * @param string $path
-	 * @return mixed
-	 */
-	protected function tsValue($path) {
-		if ($this->getNode() instanceof NodeInterface) {
-			$nodeTypeDistinctionPath = str_replace('.', '', $this->getNode()->getNodeType()->getName());
-			return parent::tsValue($nodeTypeDistinctionPath . '/' . $path);
-		} else {
-			return parent::tsValue($path);
-		}
 	}
 
 }

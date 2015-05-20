@@ -13,7 +13,6 @@ namespace Nezaniel\NodeSyndicator\TypoScript\Rss2;
 use Nezaniel\Syndicator\Dto\Rss2 as Rss2;
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\TYPO3CR\Exception\PageNotFoundException;
-use TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject;
 
 /**
  * A TypoScript object implementation to render RSS2 Feeds
@@ -26,7 +25,7 @@ class FeedImplementation extends AbstractRss2Adapter implements Rss2\InlineRende
 	 * @return string
 	 */
 	public function renderChannel() {
-		return AbstractTypoScriptObject::tsValue('channel');
+		return $this->tsValue('channel');
 	}
 
 	/**
