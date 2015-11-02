@@ -1,65 +1,61 @@
+
 'Nezaniel.NodeSyndicator:Syndication':
-  abstract: TRUE
+  abstract: true
   ui:
     inspector:
       groups:
         syndication:
-          label: 'Syndication'
+          label: Syndication
           position: 90
   properties:
     feedAsRss2:
       type: boolean
-      defaultValue: FALSE
+      defaultValue: false
       ui:
         label: 'Syndicate as RSS2'
         inspector:
-          group: 'syndication'
+          group: syndication
           position: 10
     feedAsAtom:
       type: boolean
-      defaultValue: FALSE
+      defaultValue: false
       ui:
         label: 'Syndicate as Atom'
         inspector:
-          group: 'syndication'
+          group: syndication
           position: 20
-
 'TYPO3.Neos:Document':
   superTypes:
-    syndication: 'Nezaniel.NodeSyndicator:Syndication'
+    'Nezaniel.NodeSyndicator:Syndication': true
   syndication:
     rss2:
       feed:
-        channelMode: 'self'
+        channelMode: self
       channel:
         itemFilter: 'TYPO3.Neos:Document'
-        itemsRecursive: FALSE
+        itemsRecursive: false
         propertyMapping:
-          descriptionMode: 'primaryContent'
-          title: 'title'
+          descriptionMode: primaryContent
+          title: title
       item:
         propertyMapping:
-          title: 'title'
-          descriptionMode: 'primaryContent'
+          title: title
+          descriptionMode: primaryContent
     atom:
       feed:
-        feedMode: 'self'
-
-        idMode: 'uuid'
-
-        contributors:
-
-        entryMode: 'self'
+        feedMode: self
+        idMode: uuid
+        contributors: null
+        entryMode: self
         entryFilter: 'TYPO3.Neos:Document'
-        entriesRecursive: FALSE
-        descriptionMode: 'primaryContent'
+        entriesRecursive: false
+        descriptionMode: primaryContent
         propertyMapping:
-          title: 'title'
+          title: title
       entry:
         propertyMapping:
-          descriptionMode: 'primaryContent'
-          title: 'title'
-
+          descriptionMode: primaryContent
+          title: title
 'TYPO3.Neos:ContentCollection':
   syndicator:
     rss2:
