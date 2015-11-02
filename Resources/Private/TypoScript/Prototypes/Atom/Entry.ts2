@@ -13,8 +13,6 @@ prototype(Syn:Atom.Entry) < prototype(Syn:HtmlContentContainer) {
 	}
 
 	prototype(ContentCollection) {
-		@class = 'Nezaniel\\NodeSyndicator\\TypoScript\\ContentCollectionImplementation'
-
 		prototype(Nodes:Text) {
 			templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/Text.html'
 		}

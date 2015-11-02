@@ -1,7 +1,4 @@
 prototype(Nezaniel.NodeSyndicator:HtmlContentContainer) {
-    prototype(TYPO3.Neos:ContentCollection) {
-        @class = 'Nezaniel\\NodeSyndicator\\TypoScript\\ContentCollectionImplementation'
-    }
     prototype(TYPO3.Neos.NodeTypes:Headline) {
         templatePath = 'resource://Nezaniel.NodeSyndicator/Private/Templates/NodeTypes/Headline.html'
     }
