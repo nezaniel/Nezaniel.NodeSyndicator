@@ -1,32 +1,4 @@
-
-'Nezaniel.NodeSyndicator:Syndication':
-  abstract: true
-  ui:
-    inspector:
-      groups:
-        syndication:
-          label: Syndication
-          position: 90
-  properties:
-    feedAsRss2:
-      type: boolean
-      defaultValue: false
-      ui:
-        label: 'Syndicate as RSS2'
-        inspector:
-          group: syndication
-          position: 10
-    feedAsAtom:
-      type: boolean
-      defaultValue: false
-      ui:
-        label: 'Syndicate as Atom'
-        inspector:
-          group: syndication
-          position: 20
 'TYPO3.Neos:Document':
-  superTypes:
-    'Nezaniel.NodeSyndicator:Syndication': true
   syndication:
     rss2:
       feed:
